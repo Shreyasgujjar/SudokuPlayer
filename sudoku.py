@@ -2,6 +2,7 @@ import copy
 import math
 import time
 
+#Function used to print any state using the array
 def printState(arr):
   print("")
   for row in arr:
@@ -10,6 +11,7 @@ def printState(arr):
     print("")
   print("")
 
+# Provides a list of indexes where the given element is available
 def getIndexesOf(element, boardState):
   returnList = []
   for i in range(0, len(boardState)):
@@ -18,9 +20,14 @@ def getIndexesOf(element, boardState):
         returnList.append(tuple([i, j]))
   return returnList
 
+# Given a row and column will return the square it is available in
+# This is used for getting the elements already in the given sqaure
 def cellIndex(r, c):
   return (math.floor(r/3), math.floor(c/3))
 
+# Function which will look for the the elements in the given square, 
+# row and column and provide a list of elements that can be filled
+# in the place of 0's
 def fillableElements(r, c, arr):
   elementsInRow = [ele for i, ele in enumerate(arr[r]) if ele != 0]
   elementsInColumn = [arr[i][c] for i in range(0, len(arr)) if arr[i][c] != 0]
@@ -37,6 +44,8 @@ def fillableElements(r, c, arr):
   toBeRemoved = elements + elementsInRow + elementsInColumn
   return list(set([i for i in range(1, 10)]) - set(toBeRemoved))
 
+# Fills the numbers in the given locations and changes the game state
+# Main function of the program
 def fillNumbers(r, c, arr):
   global initState
   global zeros
@@ -62,15 +71,20 @@ def fillNumbers(r, c, arr):
       initState = parentState
       loop = False
 
+# MRV function which returns the index of the element  
+# which has the least number of values to be filled
 def getMinRemValIndex(remArr):
   values = [len(fillableElements(arr[0], arr[1], initState)) for arr in remArr]
   return values.index(min(values))
 
+# Get input from the user if MRV has to be used
 smart = True if input("Use Smart Backtracking ?(y/n)").lower() == 'y' else False
+# Take the start time to calculate time time taken by the program
 startTime = time.time()
 initState = []
 visitedStates = []
 preFilledZeros = []
+# Code to read the file
 with open('sudoku.txt') as f:
   lines = f.readlines()
   lines = [line.strip() for line in lines]
@@ -78,6 +92,7 @@ with open('sudoku.txt') as f:
     initState.append([int(char) for char in line])
 parentState = copy.deepcopy(initState)
 printState(initState)
+# Loop variable to keep track of the loop
 loop = True
 count = 0
 while loop:
@@ -88,7 +103,11 @@ while loop:
     fillNumbers(zeros[index][0], zeros[index][1], initState)
   else:
     loop = False
+
+# Calculate and report the time taken by the program
 print("Time taken for the solution - ", str(round(time.time() - startTime, 3)), " seconds")
+# Calculate and report the number of steps taken by the program
 print("Steps taken to arrive at the solution - ", count)
-print("The solution is - ")
+# Print out the solution of the program
+print("Solution - ")
 printState(initState)
